@@ -1,5 +1,6 @@
 package ru.solandme.simpleblog;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -22,6 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.action_add) {
+            startActivity(new Intent(MainActivity.this, PostActivity.class));
+        }
 
         return super.onOptionsItemSelected(item);
     }
