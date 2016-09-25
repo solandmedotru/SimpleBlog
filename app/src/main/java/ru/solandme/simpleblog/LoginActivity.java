@@ -1,5 +1,6 @@
 package ru.solandme.simpleblog;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +29,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button registerBtn;
 
     private FirebaseAuth auth;
-    private DatabaseReference databaseRef;
+    private DatabaseReference databaseRefUsers;
+    private ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +38,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
-        databaseRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseRefUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseRefUsers.keepSynced(true);
+
+        progress = new ProgressDialog(this);
 
         loginEmailField = (EditText) findViewById(R.id.loginEmailField);
         loginPasswordField = (EditText) findViewById(R.id.loginPasswordField);
@@ -58,8 +63,6 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
     }
 
     private void checkLogin() {
@@ -68,10 +71,17 @@ public class LoginActivity extends AppCompatActivity {
         String password = loginPasswordField.getText().toString().trim();
 
         if (!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
+
+            progress.setMessage("Checking Login ...");
+            progress.show();
+
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
+
+                            progress.dismiss();
+
                             if (task.isSuccessful()) {
                                 checkUserExist();
                             } else {
@@ -87,15 +97,21 @@ public class LoginActivity extends AppCompatActivity {
     private void checkUserExist() {
         final String user_id = auth.getCurrentUser().getUid();
 
-        databaseRef.addValueEventListener(new ValueEventListener() {
+        databaseRefUsers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(user_id)) {
+
                     Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                     mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(mainIntent);
+
                 } else {
-                    Toast.makeText(LoginActivity.this, "You need to setup your Account.", Toast.LENGTH_LONG).show();
+
+                    Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
+                    setupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(setupIntent);
+
                 }
             }
 

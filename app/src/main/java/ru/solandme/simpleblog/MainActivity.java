@@ -15,14 +15,18 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView blogList;
-    private DatabaseReference databaseReference;
+    private DatabaseReference databaseRef;
+    private DatabaseReference databaseRefUsers;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authStateListener;
 
@@ -46,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Blog");
+        databaseRef = FirebaseDatabase.getInstance().getReference().child("Blog");
+        databaseRefUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseRefUsers.keepSynced(true);
 
         blogList = (RecyclerView) findViewById(R.id.blogList);
         blogList.setHasFixedSize(true);
@@ -57,11 +63,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        checkUserExist();
+
         auth.addAuthStateListener(authStateListener);
 
         FirebaseRecyclerAdapter<Blog, BlogViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<Blog, BlogViewHolder>(
-                        Blog.class, R.layout.blog_row, BlogViewHolder.class, databaseReference
+                        Blog.class, R.layout.blog_row, BlogViewHolder.class, databaseRef
                 ) {
                     @Override
                     protected void populateViewHolder(BlogViewHolder viewHolder, Blog model, int position) {
@@ -129,5 +137,25 @@ public class MainActivity extends AppCompatActivity {
         if (authStateListener != null) {
             auth.removeAuthStateListener(authStateListener);
         }
+    }
+
+    private void checkUserExist() {
+        final String user_id = auth.getCurrentUser().getUid();
+
+        databaseRefUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild(user_id)) {
+                    Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+                    setupIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(setupIntent);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
