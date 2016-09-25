@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,23 +30,24 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference databaseRefUsers;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private String user_id;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         auth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if (firebaseAuth.getCurrentUser() == null) {
-
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                     loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(loginIntent);
-
+                } else {
+                    user_id = auth.getCurrentUser().getUid();
                 }
             }
         };
@@ -62,10 +64,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        checkUserExist();
-
         auth.addAuthStateListener(authStateListener);
+        checkUserExist();
 
         FirebaseRecyclerAdapter<Blog, BlogViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<Blog, BlogViewHolder>(
@@ -131,16 +131,8 @@ public class MainActivity extends AppCompatActivity {
         auth.signOut();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (authStateListener != null) {
-            auth.removeAuthStateListener(authStateListener);
-        }
-    }
 
     private void checkUserExist() {
-        final String user_id = auth.getCurrentUser().getUid();
 
         databaseRefUsers.addValueEventListener(new ValueEventListener() {
             @Override

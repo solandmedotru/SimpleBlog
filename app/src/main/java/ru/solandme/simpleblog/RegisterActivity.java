@@ -1,6 +1,7 @@
 package ru.solandme.simpleblog;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -77,7 +78,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                         progress.dismiss();
 
-                        finish();
+                        Intent mainIntent = new Intent(RegisterActivity.this, MainActivity.class);
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(mainIntent);
                     }
                 }
             });

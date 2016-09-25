@@ -10,10 +10,33 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ru.solandme.simpleblog.SetupActivity">
 
-    <TextView
+    <ImageButton
+        android:id="@+id/setupImageBtn"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="#00ffffff"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/default_avatar" />
+
+    <EditText
+        android:id="@+id/setupNameField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Setup page"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/setupImageBtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:hint="Enter Your display name ..."
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/setupSubmitBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="Submit" />
+
 </RelativeLayout>
