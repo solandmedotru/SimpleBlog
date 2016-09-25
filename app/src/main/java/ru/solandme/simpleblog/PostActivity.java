@@ -68,12 +68,13 @@ public class PostActivity extends AppCompatActivity {
 
     private void startPosting() {
         progress.setMessage("Posting to Blog ...");
-        progress.show();
 
         final String title_val = postTitle.getText().toString().trim();
         final String desc_val = postDesc.getText().toString().trim();
 
         if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && imageUri != null) {
+
+            progress.show();
 
             StorageReference filePath = storage.child("Blog_Images").child(imageUri.getLastPathSegment());
 
@@ -90,7 +91,6 @@ public class PostActivity extends AppCompatActivity {
                     finish();
                 }
             });
-
         }
     }
 

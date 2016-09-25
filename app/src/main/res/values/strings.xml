@@ -6,4 +6,6 @@
     <string name="post_description">Post Description ...</string>
     <string name="post_title">Post Title ...</string>
     <string name="post_image">Post Image</string>
+    <string name="post_title_goes_here">Post Title Goes here</string>
+    <string name="post_description_goes_here">Post Description Goes here</string>
 </resources>
