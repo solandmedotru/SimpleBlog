@@ -52,9 +52,9 @@ public class PostActivity extends AppCompatActivity {
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent galaryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                galaryIntent.setType("image/*");
-                startActivityForResult(galaryIntent, GALLARY_REQUEST);
+                Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                galleryIntent.setType("image/*");
+                startActivityForResult(galleryIntent, GALLARY_REQUEST);
             }
         });
 
@@ -86,7 +86,9 @@ public class PostActivity extends AppCompatActivity {
                     DatabaseReference newPostRef = databaseReference.push();
                     newPostRef.child("title").setValue(title_val);
                     newPostRef.child("description").setValue(desc_val);
-                    newPostRef.child("imageURL").setValue(downloadUrl.toString());
+                    if (downloadUrl != null) {
+                        newPostRef.child("imageURL").setValue(downloadUrl.toString());
+                    }
                     progress.dismiss();
                     finish();
                 }
