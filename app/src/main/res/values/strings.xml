@@ -8,4 +8,9 @@
     <string name="post_image">Post Image</string>
     <string name="post_title_goes_here">Post Title Goes here</string>
     <string name="post_description_goes_here">Post Description Goes here</string>
+    <string name="your_name">Your name ...</string>
+    <string name="email">Email ...</string>
+    <string name="password">Password ...</string>
+    <string name="sing_up">Sing Up</string>
+    <string name="logout">Log out</string>
 </resources>
