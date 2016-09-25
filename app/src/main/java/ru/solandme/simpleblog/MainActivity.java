@@ -62,17 +62,17 @@ public class MainActivity extends AppCompatActivity {
             view = itemView;
         }
 
-        public void setTitle(String title) {
+        void setTitle(String title) {
             TextView postTitle = (TextView) view.findViewById(R.id.postTitle);
             postTitle.setText(title);
         }
 
-        public void setDesc(String desc) {
+        void setDesc(String desc) {
             TextView postDescription = (TextView) view.findViewById(R.id.postDesc);
             postDescription.setText(desc);
         }
 
-        public void setImage(Context context, String imageUrl) {
+        void setImage(Context context, String imageUrl) {
             ImageView postImage = (ImageView) view.findViewById(R.id.postImage);
             Picasso.with(context).load(imageUrl).into(postImage);
         }

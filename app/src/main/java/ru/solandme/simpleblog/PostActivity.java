@@ -31,7 +31,7 @@ public class PostActivity extends AppCompatActivity {
 
     private ProgressDialog progress;
 
-    private static final int GALLARY_REQUEST = 1;
+    private static final int GALLERY_REQUEST = 1;
 
 
     @Override
@@ -54,7 +54,7 @@ public class PostActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, GALLARY_REQUEST);
+                startActivityForResult(galleryIntent, GALLERY_REQUEST);
             }
         });
 
@@ -100,7 +100,7 @@ public class PostActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == GALLARY_REQUEST && resultCode == RESULT_OK) {
+        if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
             imageUri = data.getData();
             selectImage.setImageURI(imageUri);
 
