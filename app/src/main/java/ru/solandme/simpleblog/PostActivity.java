@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -25,6 +27,7 @@ public class PostActivity extends AppCompatActivity {
     private Uri imageUri = null;
 
     private StorageReference storage;
+    private DatabaseReference databaseReference;
 
     private ProgressDialog progress;
 
@@ -37,6 +40,7 @@ public class PostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         storage = FirebaseStorage.getInstance().getReference();
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Blog");
 
         selectImage = (ImageButton) findViewById(R.id.imageSelect);
         postTitle = (EditText) findViewById(R.id.titleField);
@@ -66,8 +70,8 @@ public class PostActivity extends AppCompatActivity {
         progress.setMessage("Posting to Blog ...");
         progress.show();
 
-        String title_val = postTitle.getText().toString().trim();
-        String desc_val = postDesc.getText().toString().trim();
+        final String title_val = postTitle.getText().toString().trim();
+        final String desc_val = postDesc.getText().toString().trim();
 
         if (!TextUtils.isEmpty(title_val) && !TextUtils.isEmpty(desc_val) && imageUri != null) {
 
@@ -77,7 +81,13 @@ public class PostActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                    DatabaseReference newPostRef = databaseReference.push();
+                    newPostRef.child("title").setValue(title_val);
+                    newPostRef.child("dscription").setValue(desc_val);
+                    newPostRef.child("imageURL").setValue(downloadUrl.toString());
                     progress.dismiss();
+                    finish();
                 }
             });
 
