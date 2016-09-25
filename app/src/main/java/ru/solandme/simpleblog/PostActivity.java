@@ -84,7 +84,7 @@ public class PostActivity extends AppCompatActivity {
 
                     DatabaseReference newPostRef = databaseReference.push();
                     newPostRef.child("title").setValue(title_val);
-                    newPostRef.child("dscription").setValue(desc_val);
+                    newPostRef.child("description").setValue(desc_val);
                     newPostRef.child("imageURL").setValue(downloadUrl.toString());
                     progress.dismiss();
                     finish();
