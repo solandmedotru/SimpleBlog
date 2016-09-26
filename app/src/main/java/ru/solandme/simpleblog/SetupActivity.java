@@ -82,6 +82,7 @@ public class SetupActivity extends AppCompatActivity {
 
                     databaseRefUsers.child(user_id).child("name").setValue(name);
                     databaseRefUsers.child(user_id).child("image").setValue(downloadUri);
+                    finish();
                 }
 
             });
