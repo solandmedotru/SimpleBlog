@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         viewHolder.setTitle(model.getTitle());
                         viewHolder.setDesc(model.getDescription());
                         viewHolder.setImage(getApplicationContext(), model.getImageURL());
+                        viewHolder.setUsername(model.getUsername());
                     }
                 };
 
@@ -110,6 +111,11 @@ public class MainActivity extends AppCompatActivity {
         void setImage(Context context, String imageUrl) {
             ImageView postImage = (ImageView) view.findViewById(R.id.postImage);
             Picasso.with(context).load(imageUrl).into(postImage);
+        }
+
+        void setUsername(String username) {
+            TextView postUsername = (TextView) view.findViewById(R.id.postUsername);
+            postUsername.setText(username);
         }
     }
 
