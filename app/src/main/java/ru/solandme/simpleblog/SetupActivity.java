@@ -1,5 +1,6 @@
 package ru.solandme.simpleblog;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,8 @@ public class SetupActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private StorageReference storageImages;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +43,8 @@ public class SetupActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         storageImages = FirebaseStorage.getInstance().getReference().child("Profile_images");
         databaseRefUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        progressDialog = new ProgressDialog(this);
 
         setupImageBtn = (ImageButton) findViewById(R.id.setupImageBtn);
         nameField = (EditText) findViewById(R.id.setupNameField);
@@ -72,6 +77,9 @@ public class SetupActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(name) && imageUri != null) {
 
+            progressDialog.setMessage("Finishing Setup ...");
+            progressDialog.show();
+
             StorageReference filepath = storageImages.child(imageUri.getLastPathSegment());
             filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
@@ -82,7 +90,12 @@ public class SetupActivity extends AppCompatActivity {
 
                     databaseRefUsers.child(user_id).child("name").setValue(name);
                     databaseRefUsers.child(user_id).child("image").setValue(downloadUri);
-                    finish();
+
+                    progressDialog.dismiss();
+
+                    Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
+                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(mainIntent);
                 }
 
             });

@@ -55,10 +55,17 @@ public class MainActivity extends AppCompatActivity {
         databaseRef = FirebaseDatabase.getInstance().getReference().child("Blog");
         databaseRefUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         databaseRefUsers.keepSynced(true);
+        databaseRef.keepSynced(true);
 
         blogList = (RecyclerView) findViewById(R.id.blogList);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         blogList.setHasFixedSize(true);
-        blogList.setLayoutManager(new LinearLayoutManager(this));
+        blogList.setLayoutManager(layoutManager);
+
+
     }
 
     @Override
@@ -66,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         auth.addAuthStateListener(authStateListener);
         checkUserExist();
-
         FirebaseRecyclerAdapter<Blog, BlogViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<Blog, BlogViewHolder>(
                         Blog.class, R.layout.blog_row, BlogViewHolder.class, databaseRef
