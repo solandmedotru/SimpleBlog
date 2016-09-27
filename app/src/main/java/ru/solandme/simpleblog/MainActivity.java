@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,9 +29,12 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView blogList;
     private DatabaseReference databaseRef;
     private DatabaseReference databaseRefUsers;
+    private DatabaseReference databaseRefLike;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private String user_id;
+
+    private Boolean processLike;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
         databaseRef = FirebaseDatabase.getInstance().getReference().child("Blog");
         databaseRefUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        databaseRefLike = FirebaseDatabase.getInstance().getReference().child("Likes");
         databaseRefUsers.keepSynced(true);
         databaseRef.keepSynced(true);
+        databaseRefLike.keepSynced(true);
 
         blogList = (RecyclerView) findViewById(R.id.blogList);
 
@@ -64,8 +70,6 @@ public class MainActivity extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         blogList.setHasFixedSize(true);
         blogList.setLayoutManager(layoutManager);
-
-
     }
 
     @Override
@@ -79,10 +83,54 @@ public class MainActivity extends AppCompatActivity {
                 ) {
                     @Override
                     protected void populateViewHolder(BlogViewHolder viewHolder, Blog model, int position) {
+
+                        final String postKey = getRef(position).getKey();
+
                         viewHolder.setTitle(model.getTitle());
                         viewHolder.setDesc(model.getDescription());
                         viewHolder.setImage(getApplicationContext(), model.getImageURL());
                         viewHolder.setUsername(model.getUsername());
+
+                        viewHolder.setLikeBtn(postKey);
+
+                        viewHolder.view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+
+                            }
+                        });
+
+                        viewHolder.likeBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                processLike = true;
+                                databaseRefLike.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                        if (processLike) {
+                                            if (dataSnapshot.child(postKey).hasChild(auth.getCurrentUser().getUid())) {
+
+                                                databaseRefLike.child(postKey).child(auth.getCurrentUser().getUid()).removeValue();
+                                                processLike = false;
+
+                                            } else {
+
+                                                databaseRefLike.child(postKey).child(auth.getCurrentUser().getUid()).setValue("RandomValue");
+                                                processLike = false;
+
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        });
                     }
                 };
 
@@ -92,15 +140,41 @@ public class MainActivity extends AppCompatActivity {
     public static class BlogViewHolder extends RecyclerView.ViewHolder {
 
         View view;
+        ImageButton likeBtn;
+        DatabaseReference databaseRefLike;
+        FirebaseAuth auth;
 
         public BlogViewHolder(View itemView) {
             super(itemView);
             view = itemView;
+            likeBtn = (ImageButton) view.findViewById(R.id.likeBtn);
+            databaseRefLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+            auth = FirebaseAuth.getInstance();
+
+            databaseRefLike.keepSynced(true);
         }
 
         void setTitle(String title) {
             TextView postTitle = (TextView) view.findViewById(R.id.postTitle);
             postTitle.setText(title);
+        }
+
+        void setLikeBtn(final String postKey) {
+            databaseRefLike.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(postKey).hasChild(auth.getCurrentUser().getUid())) {
+                        likeBtn.setImageResource(R.drawable.ic_like);
+                    } else {
+                        likeBtn.setImageResource(R.drawable.ic_like_grey);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
 
         void setDesc(String desc) {
