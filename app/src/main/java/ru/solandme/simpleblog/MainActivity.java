@@ -96,8 +96,9 @@ public class MainActivity extends AppCompatActivity {
                         viewHolder.view.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
-
+                                Intent singleBlogIntent = new Intent(MainActivity.this, BlogSingleActivity.class);
+                                singleBlogIntent.putExtra("postKey", postKey);
+                                startActivity(singleBlogIntent);
                             }
                         });
 
