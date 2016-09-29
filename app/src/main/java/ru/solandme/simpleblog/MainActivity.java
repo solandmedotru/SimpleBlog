@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
@@ -29,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView blogList;
     private DatabaseReference databaseRef;
     private DatabaseReference databaseRefUsers;
+    private DatabaseReference databaseRefCurrentUser;
     private DatabaseReference databaseRefLike;
     private FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private Query queryCurrentUser;
     private String user_id;
 
     private Boolean processLike;
@@ -59,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
         databaseRef = FirebaseDatabase.getInstance().getReference().child("Blog");
         databaseRefUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         databaseRefLike = FirebaseDatabase.getInstance().getReference().child("Likes");
+
+        String currentUserId = auth.getCurrentUser().getUid();
+        databaseRefCurrentUser = FirebaseDatabase.getInstance().getReference().child("Blog");
+        queryCurrentUser = databaseRefCurrentUser.orderByChild("uid").equalTo(currentUserId);
+
+
         databaseRefUsers.keepSynced(true);
         databaseRef.keepSynced(true);
         databaseRefLike.keepSynced(true);
@@ -79,7 +88,11 @@ public class MainActivity extends AppCompatActivity {
         checkUserExist();
         FirebaseRecyclerAdapter<Blog, BlogViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<Blog, BlogViewHolder>(
-                        Blog.class, R.layout.blog_row, BlogViewHolder.class, databaseRef
+                        Blog.class,
+                        R.layout.blog_row,
+                        BlogViewHolder.class,
+//                        queryCurrentUser
+                        databaseRef
                 ) {
                     @Override
                     protected void populateViewHolder(BlogViewHolder viewHolder, Blog model, int position) {

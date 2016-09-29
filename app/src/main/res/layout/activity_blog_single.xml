@@ -48,35 +48,16 @@
         android:inputType="textMultiLine"
         android:padding="15dp" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/singleRemoveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:text="@string/remove_post"
+        android:textColor="@color/colorWhite"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/singleSubmitButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            android:text="@string/submit_post"
-            android:textColor="@color/colorWhite"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/singleRemoveButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:background="@color/colorAccent"
-            android:text="@string/remove_post"
-            android:textColor="@color/colorWhite"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

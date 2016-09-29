@@ -17,13 +17,12 @@ import com.squareup.picasso.Picasso;
 
 public class BlogSingleActivity extends AppCompatActivity {
 
-    private DatabaseReference databaseRefPost;
+    private DatabaseReference databaseRef;
     private FirebaseAuth auth;
     private String postKey = null;
     private ImageView singleImageSelect;
     private EditText singleTitleField;
     private EditText singleDescField;
-    private Button singleSubmitButton;
     private Button singleRemoveButton;
 
     @Override
@@ -32,17 +31,16 @@ public class BlogSingleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_blog_single);
 
         postKey = getIntent().getExtras().getString("postKey");
-        databaseRefPost = FirebaseDatabase.getInstance().getReference().child("Blog").child(postKey);
+        databaseRef = FirebaseDatabase.getInstance().getReference().child("Blog");
         auth = FirebaseAuth.getInstance();
 
         singleImageSelect = (ImageView) findViewById(R.id.singleImageSelect);
         singleTitleField = (EditText) findViewById(R.id.singleTitleField);
         singleDescField = (EditText) findViewById(R.id.singleDescField);
 
-        singleSubmitButton = (Button) findViewById(R.id.singleSubmitButton);
         singleRemoveButton = (Button) findViewById(R.id.singleRemoveButton);
 
-        databaseRefPost.addValueEventListener(new ValueEventListener() {
+        databaseRef.child(postKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String imageURL = (String) dataSnapshot.child("imageURL").getValue();
@@ -62,18 +60,21 @@ public class BlogSingleActivity extends AppCompatActivity {
                     singleImageSelect.setClickable(true);
                     singleTitleField.setEnabled(true);
                     singleDescField.setEnabled(true);
-                    singleSubmitButton.setVisibility(View.VISIBLE);
                     singleRemoveButton.setVisibility(View.VISIBLE);
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
 
-
+        singleRemoveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseRef.child(postKey).removeValue();
+                finish();
+            }
+        });
     }
 }
